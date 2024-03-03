@@ -1,3 +1,5 @@
+# main.tf
+
 resource "aws_instance" "instance_name" {
   ami           = "ami-07d9b9ddc6cd8dd30"
   instance_type = "t2.micro"
@@ -11,7 +13,7 @@ resource "aws_instance" "instance_name" {
     type        = "ssh"
     host        = self.public_ip
     user        = "ubuntu"
-    private_key = file("C:\\Users\\Hi\\id_rsa")  # Double backslashes in the file path
+    private_key = file("${path.module}/id_rsa")  # Use a relative path
     timeout     = "4m"
   }
 
@@ -20,10 +22,10 @@ resource "aws_instance" "instance_name" {
   }
 }
 
-// Sends your public key to the instance
+# Sends your public key to the instance
 resource "aws_key_pair" "id_rsa" {
   key_name   = "id_rsa"
-  public_key = file("/Users/var.user/.ssh/id_rsa.pub")
+  public_key = file("${path.module}/id_rsa.pub")  # Use a relative path
 
   tags = {
     Name = "test_server"
