@@ -105,25 +105,21 @@ resource "aws_security_group" "my_security_group" {
 }
 
 // To Generate Private Key
-resource "tls_private_key" "rsa_4096" {
+resource "tls_private_key" "example" {
   algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-variable "key_name" {
-  description = "Name of the SSH key pair"
+  rsa_bits  = 2048
 }
 
 // Create Key Pair for Connecting EC2 via SSH
 resource "aws_key_pair" "key_pairaws" {
-  key_name   = var.key_name
-  public_key = tls_private_key.rsa_4096.public_key_openssh
+  key_name   = private_key1
+  public_key = tls_private_key.rsa_2048.public_key_openssh
 }
 
 // Save PEM file locally
 resource "local_file" "private_key" {
-  content  = tls_private_key.rsa_4096.private_key_pem
-  filename = var.key_name
+  content  = tls_private_key.rsa_2048.private_key_pem
+  filename = private_key1
 }
 
 # Create an EC2 instance within the VPC
@@ -132,6 +128,7 @@ resource "aws_instance" "my_ec2_instance" {
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
+  associate_public_ip_address = true
   key_name      = aws_key_pair.key_pairaws.key_name  # Use the name of the AWS key pair
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
