@@ -63,15 +63,55 @@ resource "tls_private_key" "my_key_pair" {
   rsa_bits  = 2048
 }
 
-# Output the public key for external use
-output "public_key" {
-  value = tls_private_key.my_key_pair.public_key_openssh
+# Output the private key to a local file
+resource "local_file" "private_key" {
+  filename = "C:\\Users\\Hi\\Downloads\\private_key.pem"  # Specify the desired local file path
+  content = tls_private_key.my_key_pair.private_key_pem
 }
-
 # Data block to get VPC ID
 data "aws_vpcs" "my_vpcs" {
   tags = {
     Name = "my-vpc"
+  }
+}
+
+# Create a security group for the EC2 instance
+resource "aws_security_group" "my_security_group" {
+  vpc_id = aws_vpc.my_vpc.id
+
+  # SSH rule
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTP rule
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS rule
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "my-security-group"
   }
 }
 
@@ -82,10 +122,7 @@ resource "aws_instance" "my_ec2_instance" {
 
   subnet_id     = aws_subnet.my_subnet.id
   key_name      = tls_private_key.my_key_pair.id  # Use the generated key pair
-  vpc_security_group_ids = ["your_security_group_id"]  # Use the ID of your security group
-
-  # Use the VPC ID from the data block
-  vpc_security_group_ids = [data.aws_vpcs.my_vpcs.ids[0]]
+  vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
   tags = {
     Name = "my-ec2-instance"
