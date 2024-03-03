@@ -1,72 +1,64 @@
+# main.tf
+
+# Configure the AWS provider
 provider "aws" {
-  region = "us-east-1"  # Update with your desired AWS region
+  region = "us-east-1"
 }
 
-resource "aws_vpc" "example_vpc" {
+# Create a VPC
+resource "aws_vpc" "tf-vpc" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support = true
   enable_dns_hostnames = true
 
   tags = {
-    Name = "example-vpc"
+    Name = "tf-vpc"
   }
 }
 
-resource "aws_subnet" "example_subnet" {
-  vpc_id     = aws_vpc.example_vpc.id
-  cidr_block = "10.0.0.0/24"
-  availability_zone = "us-east-1a"  # Update with your desired availability zone
-
-  map_public_ip_on_launch = true
+# Create a subnet within the VPC
+resource "aws_subnet" "my_subnet" {
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "your_availability_zone"
+  map_public_ip_on_launch = true  # Set to false if you want a private subnet
 
   tags = {
-    Name = "example-subnet"
+    Name = "my-subnet"
   }
 }
 
-resource "aws_security_group" "example_sg" {
-  name        = "example-sg"
-  description = "Allow SSH inbound traffic"
+# Create an internet gateway for the VPC
+resource "aws_internet_gateway" "my_igw" {
+  vpc_id = aws_vpc.my_vpc.id
 
-  vpc_id = aws_vpc.example_vpc.id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  tags = {
+    Name = "my-igw"
   }
 }
 
-resource "tls_private_key" "examp_key_pair" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
+# Attach the internet gateway to the VPC
+resource "aws_vpc_attachment" "my_vpc_attachment" {
+  vpc_id             = aws_vpc.my_vpc.id
+  internet_gateway_id = aws_internet_gateway.my_igw.id
 }
 
-resource "aws_instance" "examp_instance" {
-  ami           = "ami-07d9b9ddc6cd8dd30"
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.example_subnet.id  # Replace with your subnet resource
-  vpc_security_group_ids = [aws_security_group.example_sg.id]  # Replace with your security group resource
-  key_name      = tls_private_key.example_key_pair.public_key_openssh
+# Create a route table
+resource "aws_route_table" "my_route_table" {
+  vpc_id = aws_vpc.my_vpc.id
 
-  connection {
-    type        = "ssh"
-    host        = self.public_ip
-    user        = "ubuntu"
-    private_key = tls_private_key.exam_key_pair.private_key_pem
-    timeout     = "4m"
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.my_igw.id
   }
 
   tags = {
-    Name = "exam-instance"
+    Name = "my-route-table"
   }
 }
 
-output "private_key" {
-  value = tls_private_key.exam_key_pair.private_key_pem
-}
-
-output "public_key" {
-  value = tls_private_key.exam_key_pair.public_key_openssh
+# Associate the subnet with the route table
+resource "aws_route_table_association" "my_subnet_association" {
+  subnet_id      = aws_subnet.my_subnet.id
+  route_table_id = aws_route_table.my_route_table.id
 }
