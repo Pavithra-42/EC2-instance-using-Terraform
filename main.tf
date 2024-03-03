@@ -57,17 +57,6 @@ resource "aws_route_table_association" "my_subnet_association" {
   route_table_id = aws_route_table.my_route_table.id
 }
 
-# Generate SSH Key Pair
-resource "tls_private_key" "my_key_pair" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-# Output the private key to a local file
-resource "local_file" "private_key" {
-  filename = "C:\\Users\\Hi\\Downloads\\private_key.pem"  # Specify the desired local file path
-  content = tls_private_key.my_key_pair.private_key_pem
-}
 # Data block to get VPC ID
 data "aws_vpcs" "my_vpcs" {
   tags = {
@@ -115,13 +104,25 @@ resource "aws_security_group" "my_security_group" {
   }
 }
 
+# Create an AWS Key Pair
+resource "aws_key_pair" "my_aws_key_pair" {
+  key_name   = "my-key-pair"  # Specify the desired key pair name
+  public_key = tls_private_key.my_key_pair.public_key_openssh
+}
+
+# Output the private key to a local file
+resource "local_file" "aws_key_pair_private_key" {
+  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_private_key.pem"  # Specify the desired local file path
+  content  = aws_key_pair.my_aws_key_pair.private_key
+}
+
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
   ami           = "ami-0cd59ecaf368e5ccf"  # Replace with your desired AMI ID
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
-  key_name      = tls_private_key.my_key_pair.id  # Use the generated key pair
+  key_name      = aws_key_pair.my_aws_key_pair.key_name  # Use the name of the AWS key pair
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
   tags = {
