@@ -106,9 +106,9 @@ resource "aws_security_group" "my_security_group" {
 
 # Create an AWS Key Pair
 resource "aws_key_pair" "my_aws_key_pair" {
-  key_name = "my-key-pair"  # Specify the desired key pair name
+  key_name   = "my-key-pair"  # Specify the desired key pair name
+  public_key = "temporary-placeholder"  # Placeholder value for AWS to generate the key pair
 }
-
 
 # Output the private key to a local file
 resource "local_file" "aws_key_pair_private_key" {
