@@ -3,9 +3,9 @@
 resource "aws_instance" "instance_name" {
   ami           = "ami-07d9b9ddc6cd8dd30"
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.example_subnet.id  # Assuming a subnet resource named example_subnet exists
+  subnet_id     = subnet-071e013c3e6aebd3e  # Assuming a subnet resource named example_subnet exists
   vpc_security_group_ids = [
-    aws_security_group.example_sg.id  # Assuming a security group resource named example_sg exists
+    sg-0a9fc10324fe8e760  # Assuming a security group resource named example_sg exists
   ]
   key_name = aws_key_pair.id_rsa.key_name  # Assuming a key pair resource named id_rsa exists
 
