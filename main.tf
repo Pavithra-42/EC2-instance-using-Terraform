@@ -43,7 +43,7 @@ resource "aws_key_pair" "example_key_pair" {
   public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key
 }
 
-resource "aws_instance" "example_instance" {
+resource "aws_instance" "exam_instance" {
   ami           = "ami-07d9b9ddc6cd8dd30"  # Update with your desired AMI ID
   instance_type = "t2.micro"
 
@@ -53,10 +53,10 @@ resource "aws_instance" "example_instance" {
   subnet_id              = aws_subnet.example_subnet.id
 
   tags = {
-    Name = "example-instance"
+    Name = "exam-instance"
   }
 }
 
 output "public_ip" {
-  value = aws_instance.example_instance.public_ip
+  value = aws_instance.exam_instance.public_ip
 }
