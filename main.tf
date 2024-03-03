@@ -117,7 +117,7 @@ resource "aws_security_group" "my_security_group" {
 
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Replace with your desired AMI ID
+  ami           = "ami-0cd59ecaf368e5ccf"  # Replace with your desired AMI ID
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
