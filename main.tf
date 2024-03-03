@@ -113,8 +113,10 @@ resource "aws_key_pair" "my_aws_key_pair" {
 # Output the private key to a local file
 resource "local_file" "aws_key_pair_private_key" {
   filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_private_key.pem"  # Specify the desired local file path
-  content_sensitive  = aws_key_pair.my_aws_key_pair.private_key
+  sensitive = true
+  content   = aws_key_pair.my_aws_key_pair.private_key
 }
+
 
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
