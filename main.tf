@@ -112,14 +112,14 @@ resource "tls_private_key" "example" {
 
 // Create Key Pair for Connecting EC2 via SSH
 resource "aws_key_pair" "key_pairaws" {
-  key_name   = private_key1
-  public_key = tls_private_key.rsa_2048.public_key_openssh
+  key_name   = "private_key1"  # Provide a specific key name here
+  public_key = tls_private_key.example.public_key_openssh
 }
 
 // Save PEM file locally
 resource "local_file" "private_key" {
-  content  = tls_private_key.rsa_2048.private_key_pem
-  filename = private_key1
+  content  = tls_private_key.example.private_key_pem
+  filename = "private_key1.pem"  # Provide a specific filename here
 }
 
 # Create an EC2 instance within the VPC
