@@ -56,3 +56,17 @@ resource "aws_route_table_association" "my_subnet_association" {
   subnet_id      = aws_subnet.my_subnet.id
   route_table_id = aws_route_table.my_route_table.id
 }
+
+# Create an EC2 instance within the VPC
+resource "aws_instance" "my_ec2_instance" {
+  ami           = "ami-0cd59ecaf368e5ccf"
+  instance_type = "t2.micro"
+
+  subnet_id     = aws_subnet.my_subnet.id
+  key_name      = "your_key_pair_name"
+  security_group = ["your_security_group_id"]
+
+  tags = {
+    Name = "my-ec2-instance"
+  }
+}
