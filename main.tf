@@ -104,24 +104,27 @@ resource "aws_security_group" "my_security_group" {
   }
 }
 
-# Create an AWS Key Pair
-resource "aws_key_pair" "my_aws_key_pair" {
-  key_name   = "my-key-pair"  # Specify the desired key pair name
-  public_key = "temporary-placeholder"  # Placeholder value for AWS to generate the key pair
+// To Generate Private Key
+resource "tls_private_key" "rsa_4096" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-# Output the public key to a local file
-resource "local_file" "aws_key_pair_public_key" {
-  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_public_key.pub"  # Specify the desired local file path
-  content  = aws_key_pair.my_aws_key_pair.public_key
+variable "key_name" {
+  description = "Name of the SSH key pair"
 }
 
+// Create Key Pair for Connecting EC2 via SSH
+resource "aws_key_pair" "key_pair" {
+  key_name   = var.key_name
+  public_key = tls_private_key.rsa_4096.public_key_openssh
+}
 
-# Manually generate the private key using ssh-keygen or other tools
-# Once generated, you can use it in your local environment
-# Example command: ssh-keygen -f my-key-pair
-
-
+// Save PEM file locally
+resource "local_file" "private_key" {
+  content  = tls_private_key.rsa_4096.private_key_pem
+  filename = var.key_name
+}
 
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
