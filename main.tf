@@ -1,6 +1,6 @@
 resource "aws_instance" "instance_name" {
     # Replace with ami-id with the ami id needs to be used
-    ami = "ami-08c40ec9ead489470"
+    ami = "ami-07d9b9ddc6cd8dd30"
     instance_type = "t2.micro"
     # VPC
     subnet_id = "${aws_subnet.vtb-sub-pub-1a.id}"
