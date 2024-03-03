@@ -68,14 +68,24 @@ output "public_key" {
   value = tls_private_key.my_key_pair.public_key_openssh
 }
 
+# Data block to get VPC ID
+data "aws_vpcs" "my_vpcs" {
+  tags = {
+    Name = "my-vpc"
+  }
+}
+
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
-  ami           = "ami-0c55b159cbfafe1f0"  
+  ami           = "ami-0c55b159cbfafe1f0"  # Replace with your desired AMI ID
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
-  key_name      = tls_private_key.my_key_pair.id  
-  security_group = ["your_security_group_id"]
+  key_name      = tls_private_key.my_key_pair.id  # Use the generated key pair
+  vpc_security_group_ids = ["your_security_group_id"]  # Use the ID of your security group
+
+  # Use the VPC ID from the data block
+  vpc_security_group_ids = [data.aws_vpcs.my_vpcs.ids[0]]
 
   tags = {
     Name = "my-ec2-instance"
