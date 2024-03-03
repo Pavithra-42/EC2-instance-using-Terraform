@@ -110,12 +110,27 @@ resource "aws_key_pair" "my_aws_key_pair" {
   public_key = "temporary-placeholder"  # Placeholder value for AWS to generate the key pair
 }
 
-# Output the private key to a local file
-resource "local_file" "aws_key_pair_private_key" {
-  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_private_key.pem"  # Specify the desired local file path
-  sensitive = true
-  content   = aws_key_pair.my_aws_key_pair.private_key
+# Output the public key to a local file
+resource "local_file" "aws_key_pair_public_key" {
+  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_public_key.pub"  # Specify the desired local file path
+  content  = aws_key_pair.my_aws_key_pair.public_key
 }
+
+# Data block to get the fingerprint of the AWS Key Pair
+data "aws_key_pair" "my_aws_key_pair_data" {
+  key_name = aws_key_pair.my_aws_key_pair.key_name
+}
+
+# Output the fingerprint to a local file
+resource "local_file" "aws_key_pair_fingerprint" {
+  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_fingerprint.txt"  # Specify the desired local file path
+  content  = data.aws_key_pair.my_aws_key_pair_data.fingerprint
+}
+
+# Manually generate the private key using ssh-keygen or other tools
+# Once generated, you can use it in your local environment
+# Example command: ssh-keygen -f my-key-pair
+
 
 
 # Create an EC2 instance within the VPC
