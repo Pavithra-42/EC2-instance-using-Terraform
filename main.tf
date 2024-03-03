@@ -38,25 +38,35 @@ resource "aws_security_group" "example_sg" {
   }
 }
 
-resource "aws_key_pair" "example_key_pair" {
-  key_name   = "example-key-pair"
-  public_key = file("~/.ssh/id_rsa.pub")  # Update with the path to your public key
+resource "tls_private_key" "examp_key_pair" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
 }
 
-resource "aws_instance" "exam_instance" {
-  ami           = "ami-07d9b9ddc6cd8dd30"  # Update with your desired AMI ID
+resource "aws_instance" "examp_instance" {
+  ami           = "ami-07d9b9ddc6cd8dd30"
   instance_type = "t2.micro"
+  subnet_id     = aws_subnet.example_subnet.id  # Replace with your subnet resource
+  vpc_security_group_ids = [aws_security_group.example_sg.id]  # Replace with your security group resource
+  key_name      = tls_private_key.example_key_pair.public_key_openssh
 
-  key_name = aws_key_pair.example_key_pair.key_name
-
-  vpc_security_group_ids = [aws_security_group.example_sg.id]
-  subnet_id              = aws_subnet.example_subnet.id
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ubuntu"
+    private_key = tls_private_key.exam_key_pair.private_key_pem
+    timeout     = "4m"
+  }
 
   tags = {
     Name = "exam-instance"
   }
 }
 
-output "public_ip" {
-  value = aws_instance.exam_instance.public_ip
+output "private_key" {
+  value = tls_private_key.exam_key_pair.private_key_pem
+}
+
+output "public_key" {
+  value = tls_private_key.exam_key_pair.public_key_openssh
 }
