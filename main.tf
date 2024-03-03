@@ -57,13 +57,24 @@ resource "aws_route_table_association" "my_subnet_association" {
   route_table_id = aws_route_table.my_route_table.id
 }
 
+# Generate SSH Key Pair
+resource "tls_private_key" "my_key_pair" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+# Output the public key for external use
+output "public_key" {
+  value = tls_private_key.my_key_pair.public_key_openssh
+}
+
 # Create an EC2 instance within the VPC
 resource "aws_instance" "my_ec2_instance" {
-  ami           = "ami-0cd59ecaf368e5ccf"
+  ami           = "ami-0c55b159cbfafe1f0"  
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
-  key_name      = "your_key_pair_name"
+  key_name      = tls_private_key.my_key_pair.id  
   security_group = ["your_security_group_id"]
 
   tags = {
