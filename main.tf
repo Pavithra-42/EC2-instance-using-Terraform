@@ -20,8 +20,8 @@ resource "aws_vpc" "my_vpc" {
 resource "aws_subnet" "my_subnet" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "your_availability_zone"
-  map_public_ip_on_launch = true  # Set to false if you want a private subnet
+  availability_zone       = "us-east-1a"  # Replace with your desired availability zone in us-east-1
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "my-subnet"
@@ -35,12 +35,6 @@ resource "aws_internet_gateway" "my_igw" {
   tags = {
     Name = "my-igw"
   }
-}
-
-# Attach the internet gateway to the VPC
-resource "aws_vpc_attachment" "my_vpc_attachment" {
-  vpc_id             = aws_vpc.my_vpc.id
-  internet_gateway_id = aws_internet_gateway.my_igw.id
 }
 
 # Create a route table
