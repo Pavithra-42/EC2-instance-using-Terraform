@@ -115,7 +115,7 @@ variable "key_name" {
 }
 
 // Create Key Pair for Connecting EC2 via SSH
-resource "aws_key_pair" "key_pair" {
+resource "aws_key_pair" "key_pairaws" {
   key_name   = var.key_name
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
@@ -132,7 +132,7 @@ resource "aws_instance" "my_ec2_instance" {
   instance_type = "t2.micro"
 
   subnet_id     = aws_subnet.my_subnet.id
-  key_name      = aws_key_pair.my_aws_key_pair.key_name  # Use the name of the AWS key pair
+  key_name      = aws_key_pair.key_pairaws.key_name  # Use the name of the AWS key pair
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
 
   tags = {
