@@ -116,16 +116,6 @@ resource "local_file" "aws_key_pair_public_key" {
   content  = aws_key_pair.my_aws_key_pair.public_key
 }
 
-# Data block to get the fingerprint of the AWS Key Pair
-data "aws_key_pair" "my_aws_key_pair_data" {
-  key_name = aws_key_pair.my_aws_key_pair.key_name
-}
-
-# Output the fingerprint to a local file
-resource "local_file" "aws_key_pair_fingerprint" {
-  filename = "C:\\Users\\Hi\\Downloads\\aws_key_pair_fingerprint.txt"  # Specify the desired local file path
-  content  = data.aws_key_pair.my_aws_key_pair_data.fingerprint
-}
 
 # Manually generate the private key using ssh-keygen or other tools
 # Once generated, you can use it in your local environment
