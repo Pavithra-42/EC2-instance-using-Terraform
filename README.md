@@ -3,13 +3,13 @@ Project using Terraform to automate cloud infrastructure on AWS! 🚀
 
 Key Functionalities:
 
-🔑 VPC Setup: Automated the creation of a Virtual Private Cloud (VPC) with associated subnets for secure network segmentation.
+VPC Setup: Automated the creation of a Virtual Private Cloud (VPC) with associated subnets for secure network segmentation.
 
-🔑 EC2 Instance Launch: Provisioned an EC2 instance within the VPC.
+EC2 Instance Launch: Provisioned an EC2 instance within the VPC.
 
-🔑 Private Key Generation: Automated the generation and downloading of a private key for secure access to the EC2 instance.
+Private Key Generation: Automated the generation and downloading of a private key for secure access to the EC2 instance.
 
-🔑 Infrastructure as Code (IaC): Managed all configurations in a single main.tf file to ensure consistency and easy scalability.
+Infrastructure as Code (IaC): Managed all configurations in a single main.tf file to ensure consistency and easy scalability.
 
 
 Key Steps:
